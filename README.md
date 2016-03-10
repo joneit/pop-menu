@@ -3,7 +3,7 @@ Easy generation of HTML form controls.
 
 ## Synopsis
 
-...
+[ to be written ]
 
 ### API documentation
 
@@ -11,7 +11,7 @@ Detailed API docs can be found [here](http://joneit.github.io/pop-menu/pop-menu.
 
 ### Demo
 
-An enhanced demo can be found [here](http://joneit.github.io/pop-menu/demo.html).
+A demo can be found [here](http://joneit.github.io/pop-menu/demo.html).
 
 ### CDN versions
 

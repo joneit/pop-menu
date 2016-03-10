@@ -188,24 +188,62 @@ function findItem(menu, name) {
  * The node will always be a {@link valueItem} object; when a `string`, it is boxed for you.
  *
  * @memberOf popMenu
+ *
  * @param {menuItem[]} menu
- * @param {function} iteratee
+ *
+ * @param {function} iteratee - For each item in the menu, `iteratee` is called with:
+ * * the `valueItem` (if the item is a primative string, it is wrapped up for you)
+ * * a 0-based `ordinal`
+ *
+ * The `iteratee` return value can be used to replace the item, as follows:
+ * * `undefined` - do nothing
+ * * `null` - splice out the item; resulting empty submenus are also spliced out (see note)
+ * * anything else - replace the item with this value; if value is a submenu (i.e., an array) `iteratee` will then be called to walk it as well (see note)
+ *
+ * > Note: Returning anything (other than `undefined`) from `iteratee` will (deeply) mutate the original `menu` so you may want to copy it first (deeply, including all levels of array nesting but not the terminal node objects).
+ *
  * @returns {number} Number of items (terminal nodes) in the menu tree.
  */
 function walk(menu, iteratee) {
-    var n = 0;
+    var ordinal = 0,
+        i, item, submenu, newVal;
 
-    menu.forEach(function(item) {
-        var submenu = item.submenu || item;
-        if (submenu instanceof Array) {
-            n += walk(submenu, iteratee);
-        } else {
-            iteratee(item.name ? item : { name: item }, n);
-            n += 1;
+    for (i = menu.length - 1; i > 0; --i) {
+        item = menu[i];
+        submenu = item.submenu || item;
+
+        if (!(submenu instanceof Array)) {
+            submenu = undefined;
         }
-    });
 
-    return n;
+        if (!submenu) {
+            newVal = iteratee(item.name ? item : { name: item }, ordinal);
+            ordinal += 1;
+
+            if (newVal !== undefined) {
+                if (newVal === null) {
+                    menu.splice(i, 1);
+                    ordinal -= 1;
+                } else {
+                    menu[i] = item = newVal;
+                    submenu = item.submenu || item;
+                    if (!(submenu instanceof Array)) {
+                        submenu = undefined;
+                    }
+                }
+            }
+        }
+
+        if (submenu) {
+            ordinal += walk(submenu, iteratee);
+            if (submenu.length === 0) {
+                menu.splice(i, 1);
+                ordinal -= 1;
+            }
+        }
+    }
+
+    return ordinal;
 }
 
 /**
