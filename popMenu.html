@@ -918,7 +918,20 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>For each item in the menu, <code>iteratee</code> is called with:</p>
+<ul>
+<li>the <code>valueItem</code> (if the item is a primative string, it is wrapped up for you)</li>
+<li>a 0-based <code>ordinal</code></li>
+</ul>
+<p>The <code>iteratee</code> return value can be used to replace the item, as follows:</p>
+<ul>
+<li><code>undefined</code> - do nothing</li>
+<li><code>null</code> - splice out the item; resulting empty submenus are also spliced out (see note)</li>
+<li>anything else - replace the item with this value; if value is a submenu (i.e., an array) <code>iteratee</code> will then be called to walk it as well (see note)</li>
+</ul>
+<blockquote>
+<p>Note: Returning anything (other than <code>undefined</code>) from <code>iteratee</code> will (deeply) mutate the original <code>menu</code> so you may want to copy it first (deeply, including all levels of array nesting but not the terminal node objects).</p>
+</blockquote></td>
         </tr>
 
     
