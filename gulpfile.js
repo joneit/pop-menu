@@ -121,8 +121,8 @@ function doc(callback) {
 function enclose() {
     return gulp.src(srcDir + 'index.js')
         .pipe($$.replace(
-            'module.exports =',
-            'window.' + main + ' ='
+            /^([\s\S]*'use strict';\n)\n*([\s\S]*)module.exports =([\s\S]*)$/m,
+            '$1\nwindow.' + main + ' = (function(){\n\n$2return $3\n})();\n'
         ))
 
         .pipe($$.rename(name + '.js'))
