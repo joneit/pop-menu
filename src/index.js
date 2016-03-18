@@ -208,7 +208,7 @@ function walk(menu, iteratee) {
     var ordinal = 0,
         i, item, submenu, newVal;
 
-    for (i = menu.length - 1; i > 0; --i) {
+    for (i = menu.length - 1; i >= 0; --i) {
         item = menu[i];
         submenu = item.submenu || item;
 
