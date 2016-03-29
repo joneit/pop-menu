@@ -30,9 +30,10 @@ var REGEXP_INDIRECTION = /^(\w+)\((\w+)\)$/;  // finds complete pattern a(b) whe
  */
 
 /**
- * @summary Builds a new menu prepopulated with items and groups.
- * @desc This function creates a new pop-up menu (a.k.a. "drop-down"). This is a `<select>...</select>` element, prepopulated with items (`<option>...</option>` elements) and groups (`<optgroup>...</optgroup>` elements).
+ * @summary Builds a new menu pre-populated with items and groups.
+ * @desc This function creates a new pop-up menu (a.k.a. "drop-down"). This is a `<select>...</select>` element, pre-populated with items (`<option>...</option>` elements) and groups (`<optgroup>...</optgroup>` elements).
  * > Bonus: This function also builds `input type=text` elements.
+ * > NOTE: This function generates OPTGROUP elements for subtrees. However, note that HTML5 specifies that OPTGROUP elemnents made not nest! This function generates the markup for them but they are not rendered by most browsers, or not completely. Therefore, for now, do not specify more than one level subtrees. Future versions of HTML may support it. I also plan to add here options to avoid OPTGROUPS entirely either by indenting option text, or by creating alternate DOM nodes using `<li>` instead of `<select>`, or both.
  * @memberOf popMenu
  *
  * @param {Element|string} el - Must be one of (case-sensitive):
@@ -61,7 +62,9 @@ function build(el, menu, options) {
         blacklist = options.blacklist,
         sort = options.sort,
         breadcrumbs = options.breadcrumbs || [],
-        path = breadcrumbs ? breadcrumbs.join('.') + '.' : '',
+        path = breadcrumbs.length ? breadcrumbs.join('.') + '.' : '',
+        subtreeName = popMenu.subtree,
+        groupIndex = 0,
         tagName;
 
     if (el instanceof Element) {
@@ -94,7 +97,7 @@ function build(el, menu, options) {
             menu = menu.slice().sort(itemComparator); // sorted clone
         }
 
-        menu.forEach(function(item, index) {
+        menu.forEach(function(item) {
             // if item is of form a(b) and there is an function a in options, then item = options.a(b)
             if (options && typeof item === 'string') {
                 var indirection = item.match(REGEXP_INDIRECTION);
@@ -110,20 +113,20 @@ function build(el, menu, options) {
                 }
             }
 
-            var submenu = item.submenu || item;
-            if (submenu instanceof Array) {
+            var subtree = item[subtreeName] || item;
+            if (subtree instanceof Array) {
 
                 var groupOptions = {
-                    breadcrumbs: breadcrumbs.concat(index + 1),
-                    prompt: item.label || 'Group ' + path + (index + 1),
+                    breadcrumbs: breadcrumbs.concat(++groupIndex),
+                    prompt: item.label || 'Group ' + path + groupIndex,
                     options: sort,
                     blacklist: blacklist
                 };
 
-                var optgroup = build('OPTGROUP', submenu, groupOptions);
+                var optgroup = build('OPTGROUP', subtree, groupOptions);
 
                 if (optgroup.childElementCount) {
-                    el.add(optgroup);
+                    el.appendChild(optgroup);
                 }
 
             } else if (typeof item !== 'object') {
@@ -158,19 +161,20 @@ function itemComparator(a, b) {
 }
 
 /**
- * @summary Recursively searches `menu` for a named `item`.
+ * @summary Recursively searches the context array of `menuItem`s for a named `item`.
  * @memberOf popMenu
- * @param {menuItem[]} menu
+ * @this Array
  * @param {string} name
  * @returns {undefined|menuItem} The found item or `undefined` if not found.
  */
-function findItem(menu, name) {
-    var shallow, deep, item;
+function findItem(name) {
+    var shallow, deep, item,
+        subtreeName = popMenu.subtree;
 
-    shallow = menu.find(function(item) {
-        var submenu = item.submenu || item;
-        if (submenu instanceof Array) {
-            return (deep = findItem(submenu, name));
+    shallow = this.find(function(item) {
+        var subtree = item[subtreeName] || item;
+        if (subtree instanceof Array) {
+            return (deep = findItem.call(subtree, name));
         } else {
             return (item.name || item) === name;
         }
@@ -182,14 +186,14 @@ function findItem(menu, name) {
 }
 
 /**
- * @summary Recursively walks `menu` and calls `iteratee` on field.
- * @desc Iteratee is called with each item (terminal node) in the menu tree and a flat 0-based index.
+ * @summary Recursively walks the context array of `menuItem`s and calls `iteratee` on each item therein.
+ * @desc `iteratee` is called with each item (terminal node) in the menu tree and a flat 0-based index. Recurses on member with name of `popMenu.subtree`.
  *
  * The node will always be a {@link valueItem} object; when a `string`, it is boxed for you.
  *
  * @memberOf popMenu
  *
- * @param {menuItem[]} menu
+ * @this Array
  *
  * @param {function} iteratee - For each item in the menu, `iteratee` is called with:
  * * the `valueItem` (if the item is a primative string, it is wrapped up for you)
@@ -198,25 +202,27 @@ function findItem(menu, name) {
  * The `iteratee` return value can be used to replace the item, as follows:
  * * `undefined` - do nothing
  * * `null` - splice out the item; resulting empty submenus are also spliced out (see note)
- * * anything else - replace the item with this value; if value is a submenu (i.e., an array) `iteratee` will then be called to walk it as well (see note)
+ * * anything else - replace the item with this value; if value is a subtree (i.e., an array) `iteratee` will then be called to walk it as well (see note)
  *
  * > Note: Returning anything (other than `undefined`) from `iteratee` will (deeply) mutate the original `menu` so you may want to copy it first (deeply, including all levels of array nesting but not the terminal node objects).
  *
  * @returns {number} Number of items (terminal nodes) in the menu tree.
  */
-function walk(menu, iteratee) {
-    var ordinal = 0,
-        i, item, submenu, newVal;
+function walk(iteratee) {
+    var menu = this,
+        ordinal = 0,
+        subtreeName = popMenu.subtree,
+        i, item, subtree, newVal;
 
     for (i = menu.length - 1; i >= 0; --i) {
         item = menu[i];
-        submenu = item.submenu || item;
+        subtree = item[subtreeName] || item;
 
-        if (!(submenu instanceof Array)) {
-            submenu = undefined;
+        if (!(subtree instanceof Array)) {
+            subtree = undefined;
         }
 
-        if (!submenu) {
+        if (!subtree) {
             newVal = iteratee(item.name ? item : { name: item }, ordinal);
             ordinal += 1;
 
@@ -226,17 +232,17 @@ function walk(menu, iteratee) {
                     ordinal -= 1;
                 } else {
                     menu[i] = item = newVal;
-                    submenu = item.submenu || item;
-                    if (!(submenu instanceof Array)) {
-                        submenu = undefined;
+                    subtree = item[subtreeName] || item;
+                    if (!(subtree instanceof Array)) {
+                        subtree = undefined;
                     }
                 }
             }
         }
 
-        if (submenu) {
-            ordinal += walk(submenu, iteratee);
-            if (submenu.length === 0) {
+        if (subtree) {
+            ordinal += walk.call(subtree, iteratee);
+            if (subtree.length === 0) {
                 menu.splice(i, 1);
                 ordinal -= 1;
             }
@@ -273,7 +279,8 @@ var popMenu = {
     walk: walk,
     findItem: findItem,
     formatItem: formatItem,
-    isGroupProxy: isGroupProxy
+    isGroupProxy: isGroupProxy,
+    subtree: 'submenu'
 };
 
 module.exports = popMenu;

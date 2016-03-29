@@ -6,7 +6,7 @@
 window.onload = function() {
     var body = document.querySelector('body');
 
-    popMenu.build(body.querySelector('select'), ['A', 'B', 'C', ['a', 'b', 'c']], { prompt: 'Choose One'});
+    popMenu.build(body.querySelector('select'), ['A', 'B', 'C', ['a', ['AA', 'BB'], 'b', 'c', ['Aa', 'Bb']], 'D', ['alpha', 'beta']], { prompt: 'Choose One'});
 
     var menu = [
         { name: 'William', alias: 'Bill'},
