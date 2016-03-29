@@ -109,15 +109,16 @@
     <h4 class="name" id=".build"><span class="type-signature">(static) </span>build<span class="signature">(el, menu<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Element}</span></h4>
 
     
-    <p class="summary"><p>Builds a new menu prepopulated with items and groups.</p></p>
+    <p class="summary"><p>Builds a new menu pre-populated with items and groups.</p></p>
     
 
 
 
 <div class="description">
-    <p>This function creates a new pop-up menu (a.k.a. &quot;drop-down&quot;). This is a <code>&lt;select&gt;...&lt;/select&gt;</code> element, prepopulated with items (<code>&lt;option&gt;...&lt;/option&gt;</code> elements) and groups (<code>&lt;optgroup&gt;...&lt;/optgroup&gt;</code> elements).</p>
+    <p>This function creates a new pop-up menu (a.k.a. &quot;drop-down&quot;). This is a <code>&lt;select&gt;...&lt;/select&gt;</code> element, pre-populated with items (<code>&lt;option&gt;...&lt;/option&gt;</code> elements) and groups (<code>&lt;optgroup&gt;...&lt;/optgroup&gt;</code> elements).</p>
 <blockquote>
-<p>Bonus: This function also builds <code>input type=text</code> elements.</p>
+<p>Bonus: This function also builds <code>input type=text</code> elements.
+NOTE: This function generates OPTGROUP elements for subtrees. However, note that HTML5 specifies that OPTGROUP elemnents made not nest! This function generates the markup for them but they are not rendered by most browsers, or not completely. Therefore, for now, do not specify more than one level subtrees. Future versions of HTML may support it. I also plan to add here options to avoid OPTGROUPS entirely either by indenting option text, or by creating alternate DOM nodes using <code>&lt;li&gt;</code> instead of <code>&lt;select&gt;</code>, or both.</p>
 </blockquote>
 </div>
 
@@ -512,10 +513,10 @@
 
     
 
-    <h4 class="name" id=".findItem"><span class="type-signature">(static) </span>findItem<span class="signature">(menu, name)</span><span class="type-signature"> &rarr; {undefined|<a href="global.html#menuItem">menuItem</a>}</span></h4>
+    <h4 class="name" id=".findItem"><span class="type-signature">(static) </span>findItem<span class="signature">(name)</span><span class="type-signature"> &rarr; {undefined|<a href="global.html#menuItem">menuItem</a>}</span></h4>
 
     
-    <p class="summary"><p>Recursively searches <code>menu</code> for a named <code>item</code>.</p></p>
+    <p class="summary"><p>Recursively searches the context array of <code>menuItem</code>s for a named <code>item</code>.</p></p>
     
 
 
@@ -525,6 +526,9 @@
 
 
 
+
+    <h5>This:</h5>
+    <ul><li>Array</li></ul>
 
 
 
@@ -549,29 +553,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>menu</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="global.html#menuItem">menuItem</a>></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
     
 
         <tr>
@@ -833,16 +814,16 @@
 
     
 
-    <h4 class="name" id=".walk"><span class="type-signature">(static) </span>walk<span class="signature">(menu, iteratee)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id=".walk"><span class="type-signature">(static) </span>walk<span class="signature">(iteratee)</span><span class="type-signature"> &rarr; {number}</span></h4>
 
     
-    <p class="summary"><p>Recursively walks <code>menu</code> and calls <code>iteratee</code> on field.</p></p>
+    <p class="summary"><p>Recursively walks the context array of <code>menuItem</code>s and calls <code>iteratee</code> on each item therein.</p></p>
     
 
 
 
 <div class="description">
-    <p>Iteratee is called with each item (terminal node) in the menu tree and a flat 0-based index.</p>
+    <p><code>iteratee</code> is called with each item (terminal node) in the menu tree and a flat 0-based index. Recurses on member with name of <code>popMenu.subtree</code>.</p>
 <p>The node will always be a <a href="global.html#valueItem"><code>valueItem</code></a> object; when a <code>string</code>, it is boxed for you.</p>
 </div>
 
@@ -851,6 +832,9 @@
 
 
 
+
+    <h5>This:</h5>
+    <ul><li>Array</li></ul>
 
 
 
@@ -875,29 +859,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>menu</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="global.html#menuItem">menuItem</a>></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
     
 
         <tr>
@@ -927,7 +888,7 @@
 <ul>
 <li><code>undefined</code> - do nothing</li>
 <li><code>null</code> - splice out the item; resulting empty submenus are also spliced out (see note)</li>
-<li>anything else - replace the item with this value; if value is a submenu (i.e., an array) <code>iteratee</code> will then be called to walk it as well (see note)</li>
+<li>anything else - replace the item with this value; if value is a subtree (i.e., an array) <code>iteratee</code> will then be called to walk it as well (see note)</li>
 </ul>
 <blockquote>
 <p>Note: Returning anything (other than <code>undefined</code>) from <code>iteratee</code> will (deeply) mutate the original <code>menu</code> so you may want to copy it first (deeply, including all levels of array nesting but not the terminal node objects).</p>
