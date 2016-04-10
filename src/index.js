@@ -164,19 +164,22 @@ function itemComparator(a, b) {
  * @summary Recursively searches the context array of `menuItem`s for a named `item`.
  * @memberOf popMenu
  * @this Array
- * @param {string} name
+ * @param {string} value - Value to search for.
+ * @param {string} [key='name'] - Property to search in when a menuItem is an object.
  * @returns {undefined|menuItem} The found item or `undefined` if not found.
  */
-function findItem(name) {
+function findItem(value, key) {
     var shallow, deep, item,
         subtreeName = popMenu.subtree;
+
+    key = key || 'name';
 
     shallow = this.find(function(item) {
         var subtree = item[subtreeName] || item;
         if (subtree instanceof Array) {
-            return (deep = findItem.call(subtree, name));
+            return (deep = findItem.call(subtree, value, key));
         } else {
-            return (item.name || item) === name;
+            return (item[key] || item) === value;
         }
     });
 
