@@ -513,7 +513,7 @@ NOTE: This function generates OPTGROUP elements for subtrees. However, note that
 
     
 
-    <h4 class="name" id=".findItem"><span class="type-signature">(static) </span>findItem<span class="signature">(name)</span><span class="type-signature"> &rarr; {undefined|<a href="global.html#menuItem">menuItem</a>}</span></h4>
+    <h4 class="name" id=".findItem"><span class="type-signature">(static) </span>findItem<span class="signature">(value, key<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {undefined|<a href="global.html#menuItem">menuItem</a>}</span></h4>
 
     
     <p class="summary"><p>Recursively searches the context array of <code>menuItem</code>s for a named <code>item</code>.</p></p>
@@ -545,7 +545,11 @@ NOTE: This function generates OPTGROUP elements for subtrees. However, note that
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -557,7 +561,7 @@ NOTE: This function generates OPTGROUP elements for subtrees. However, note that
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>value</code></td>
             
 
             <td class="type">
@@ -570,10 +574,61 @@ NOTE: This function generates OPTGROUP elements for subtrees. However, note that
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"></td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Value to search for.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'name'
+                
+                </td>
+            
+
+            <td class="description last"><p>Property to search in when a menuItem is an object.</p></td>
         </tr>
 
     
