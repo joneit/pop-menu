@@ -165,27 +165,44 @@ function itemComparator(a, b) {
  * @memberOf popMenu
  * @this Array
  * @param {string} value - Value to search for.
- * @param {string} [key='name'] - Property to search in when a menuItem is an object.
+ * @param {object} [options]
+ * @param {string} [options.keys=[popMenu.defaultKey]] - Properties to search each menuItem when it is an object.
+ * @param {boolean} [options.caseInsensitive=false] - Ignore case while searching.
  * @returns {undefined|menuItem} The found item or `undefined` if not found.
  */
-function findItem(value, key) {
-    var shallow, deep, item,
-        subtreeName = popMenu.subtree;
+function findItem(value, options) {
+    var shallow, deep, item, key,
+        keys = options && options.keys || [popMenu.defaultKey],
+        caseInsensitive = options && options.caseInsensitive;
 
-    key = key || 'name';
+    value = toString(value, caseInsensitive);
 
     shallow = this.find(function(item) {
-        var subtree = item[subtreeName] || item;
+        var subtree = item[popMenu.subtree] || item;
         if (subtree instanceof Array) {
-            return (deep = findItem.call(subtree, value, key));
+            return (deep = findItem.call(subtree, value, options));
         } else {
-            return (item[key] || item) === value;
+            for (var i = 0; i < keys.length; ++i) {
+                key = keys[i];
+                return toString(item[key] || key === popMenu.defaultKey && item) === value;
+            }
         }
     });
 
     item = deep || shallow;
 
     return item && (item.name ? item : { name: item });
+}
+
+function toString(s, caseInsensitive) {
+    var result = '';
+    if (s) {
+        result += s; // convert s to string
+        if (caseInsensitive) {
+            result = result.toUpperCase();
+        }
+    }
+    return result;
 }
 
 /**
@@ -283,7 +300,8 @@ var popMenu = {
     findItem: findItem,
     formatItem: formatItem,
     isGroupProxy: isGroupProxy,
-    subtree: 'submenu'
+    subtree: 'submenu',
+    defaultKey: 'name'
 };
 
 module.exports = popMenu;
