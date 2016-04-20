@@ -106,7 +106,7 @@
 
     
 
-    <h4 class="name" id=".build"><span class="type-signature">(static) </span>build<span class="signature">(el, menu<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Element}</span></h4>
+    <h4 class="name" id=".build"><span class="type-signature">(static) </span>build<span class="signature">(el, menu<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Element}</span></h4>
 
     
     <p class="summary"><p>Builds a new menu pre-populated with items and groups.</p></p>
@@ -117,8 +117,8 @@
 <div class="description">
     <p>This function creates a new pop-up menu (a.k.a. &quot;drop-down&quot;). This is a <code>&lt;select&gt;...&lt;/select&gt;</code> element, pre-populated with items (<code>&lt;option&gt;...&lt;/option&gt;</code> elements) and groups (<code>&lt;optgroup&gt;...&lt;/optgroup&gt;</code> elements).</p>
 <blockquote>
-<p>Bonus: This function also builds <code>input type=text</code> elements.</p>
-<p>NOTE: This function generates OPTGROUP elements for subtrees. However, note that HTML5 specifies that OPTGROUP elemnents made not nest! This function generates the markup for them but they are not rendered by most browsers, or not completely. Therefore, for now, do not specify more than one level subtrees. Future versions of HTML may support it. I also plan to add here options to avoid OPTGROUPS entirely either by indenting option text, or by creating alternate DOM nodes using <code>&lt;li&gt;</code> instead of <code>&lt;select&gt;</code>, or both.</p>
+<p>Bonus: This function also builds <code>input type=text</code> elements.
+NOTE: This function generates OPTGROUP elements for subtrees. However, note that HTML5 specifies that OPTGROUP elemnents made not nest! This function generates the markup for them but they are not rendered by most browsers, or not completely. Therefore, for now, do not specify more than one level subtrees. Future versions of HTML may support it. I also plan to add here options to avoid OPTGROUPS entirely either by indenting option text, or by creating alternate DOM nodes using <code>&lt;li&gt;</code> instead of <code>&lt;select&gt;</code>, or both.</p>
 </blockquote>
 </div>
 
@@ -233,43 +233,6 @@
             
 
             <td class="description last"><p>Hierarchical list of strings to add as <code>&lt;option&gt;...&lt;/option&gt;</code> or <code>&lt;optgroup&gt;....&lt;/optgroup&gt;</code> elements. Omitting creates a text box.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"></td>
         </tr>
 
     
@@ -709,7 +672,7 @@
 
         <tr>
             
-                <td class="name"><code>options.caseInsensitive</code></td>
+                <td class="name"><code>options.caseSensitive</code></td>
             
 
             <td class="type">
