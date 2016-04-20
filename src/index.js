@@ -167,24 +167,32 @@ function itemComparator(a, b) {
  * @param {string} value - Value to search for.
  * @param {object} [options]
  * @param {string} [options.keys=[popMenu.defaultKey]] - Properties to search each menuItem when it is an object.
- * @param {boolean} [options.caseInsensitive=false] - Ignore case while searching.
+ * @param {boolean} [options.caseSensitive=false] - Ignore case while searching.
  * @returns {undefined|menuItem} The found item or `undefined` if not found.
  */
 function findItem(value, options) {
-    var shallow, deep, item, key,
+    var shallow, deep, item, prop,
         keys = options && options.keys || [popMenu.defaultKey],
-        caseInsensitive = options && options.caseInsensitive;
+        caseSensitive = options && options.caseSensitive;
 
-    value = toString(value, caseInsensitive);
+    value = toString(value, caseSensitive);
 
     shallow = this.find(function(item) {
         var subtree = item[popMenu.subtree] || item;
+
         if (subtree instanceof Array) {
-            return (deep = findItem.call(subtree, value, options));
-        } else {
-            for (var i = 0; i < keys.length; ++i) {
-                key = keys[i];
-                return toString(item[key] || key === popMenu.defaultKey && item) === value;
+            deep = findItem.call(subtree, value, options);
+            return true;
+        }
+
+        if (typeof item !== 'object') {
+            return toString(item, caseSensitive) === value;
+        }
+
+        for (var i = 0; i < keys.length; ++i) {
+            prop = item[keys[i]];
+            if (prop) {
+                return toString(prop, caseSensitive) === value;
             }
         }
     });
@@ -194,11 +202,11 @@ function findItem(value, options) {
     return item && (item.name ? item : { name: item });
 }
 
-function toString(s, caseInsensitive) {
+function toString(s, caseSensitive) {
     var result = '';
     if (s) {
         result += s; // convert s to string
-        if (caseInsensitive) {
+        if (!caseSensitive) {
             result = result.toUpperCase();
         }
     }
