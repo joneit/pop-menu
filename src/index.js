@@ -181,18 +181,17 @@ function findItem(value, options) {
         var subtree = item[popMenu.subtree] || item;
 
         if (subtree instanceof Array) {
-            deep = findItem.call(subtree, value, options);
-            return true;
+            return (deep = findItem.call(subtree, value, options));
         }
 
         if (typeof item !== 'object') {
             return toString(item, caseSensitive) === value;
-        }
-
-        for (var i = 0; i < keys.length; ++i) {
-            prop = item[keys[i]];
-            if (prop) {
-                return toString(prop, caseSensitive) === value;
+        } else {
+            for (var i = 0; i < keys.length; ++i) {
+                prop = item[keys[i]];
+                if (prop && toString(prop, caseSensitive) === value) {
+                    return true;
+                }
             }
         }
     });
