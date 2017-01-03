@@ -355,9 +355,10 @@
 
 
 <div class="description">
-    <p>You should supply both <code>name</code> and <code>alias</code> but you could omit one or the other and whichever you provide will be used for both.</p>
+    <p>You should supply both <code>name</code> and <code>alias</code> (or <code>header</code>) but you could omit one or the other and whichever you provide will be used for both.</p>
 <blockquote>
-<p>If you only give the <code>name</code> property, you might as well just give a string for <a href="global.html#menuItem"><code>menuItem</code></a> rather than this object.</p>
+<p>If you only give the <code>name</code> property, you might as well just give a string for <a href="global.html#menuItem"><code>menuItem</code></a> rather than this object.
+Only the <code>name</code> and <code>alias</code> (or <code>header</code>) properties are standard. You can invent whatever other properties you need, such as <code>type</code> and <code>hidden</code>, shown here as suggestions.</p>
 </blockquote>
 </div>
 
@@ -432,7 +433,7 @@
             
                 <td class="default">
                 
-                    alias
+                    alias || header
                 
                 </td>
             
@@ -469,12 +470,49 @@
             
                 <td class="default">
                 
+                    header
+                
+                </td>
+            
+
+            <td class="description last"><p>Text of <code>&lt;option&gt;...&lt;/option&gt;</code> element. In practice, <code>header</code> is a synonym for <code>alias</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>header</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
                     name
                 
                 </td>
             
 
-            <td class="description last"><p>Text of <code>&lt;option&gt;...&lt;/option&gt;</code> element.</p></td>
+            <td class="description last"><p>Text of <code>&lt;option&gt;...&lt;/option&gt;</code> element. In practice, <code>header</code> is a synonym for <code>alias</code>.</p></td>
         </tr>
 
     
@@ -612,7 +650,7 @@
 <br class="clear">
 
 <footer>
-    © 2016 <a href="http://www.openfin.co" target="_blank">OpenFin</a> All Rights Reserved.
+    © 2017 <a href="http://www.openfin.co" target="_blank">OpenFin</a> All Rights Reserved.
 </footer>
 
 <script> prettyPrint(); </script>
